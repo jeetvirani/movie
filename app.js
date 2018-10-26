@@ -61,6 +61,11 @@ app.get('/login', function (req, res) {
 });
 
 
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
 
 app.post("/login", function (req, res) {
   var sql = 'SELECT * FROM user WHERE username = ? AND password = ?';
