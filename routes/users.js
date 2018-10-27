@@ -5,18 +5,21 @@ var connection     = require('../lib/dbconfig');
 
 router.get('/', isAuthenticated,async function(req, res, next) {
   var username   = req.session.user;
+  console.log(username)                    
 });
 
 
 
 router.get('/searchUser', isAuthenticated, async function(req,res,next) {
   var user_id = req.session.user.id;
+  console.log(user_id)
+  console.log(req.query.user_name);
   var sql = 'SELECT * FROM user WHERE locate(?,name)>0';
   var user_name = req.query.user_name;
   user_name = user_name.toLowerCase();
   connection.query(sql, [user_name], function (err, rows) {
     if (err) return err
-
+    console.log(rows)
     res.status(200).send({ "response": rows});
   });
 })
@@ -24,8 +27,9 @@ router.get('/searchUser', isAuthenticated, async function(req,res,next) {
 
 
 router.post('/followUser', isAuthenticated, async function(req,res,next) {
-  console.log(req.session.user)
   var user_id = req.session.user.id;
+  console.log(user_id)
+  console.log(req.body)
   var sql = 'SELECT * FROM user WHERE username = ?';
   var username = req.body.username;
   connection.query(sql, [username], function (err, rows) {
@@ -37,7 +41,7 @@ router.post('/followUser', isAuthenticated, async function(req,res,next) {
         if (!follow[0]){
           connection.query('INSERT INTO follower ( user_id, follower_id) values (?,?)', [rows[0].id,user_id], function (err, rows) {
             if (err) return err
-        
+            console.log("successfully followed ")
             res.status(200).send({ "response": rows[0] });
           });
         }else{
@@ -49,6 +53,8 @@ router.post('/followUser', isAuthenticated, async function(req,res,next) {
 
 router.post('/unFollowUser', isAuthenticated, async function (req, res, next) {
   var user_id = req.session.user.id;
+  console.log(user_id)
+  console.log(req.body)
   var sql = 'SELECT * FROM user WHERE username = ?';
   var username = req.body.username;
   connection.query(sql, [username], function (err, rows) {
@@ -58,7 +64,7 @@ router.post('/unFollowUser', isAuthenticated, async function (req, res, next) {
     var sql = 'DELETE FROM follower where user_id = ? AND follower_id = ?';
     connection.query(sql, [rows[0].id, user_id], function (err, rows) {
       if (err) return err
-  
+      console.log("successfully unfollowed ")
       res.status(200).send({ "response": rows[0] });
     });
   });
@@ -97,10 +103,11 @@ router.get('/getProfileInfo', isAuthenticated, async function (req, res, next) {
 
 function isAuthenticated(req, res, next) {
   if (req.session.user){
-
+    console.log(req.session.user)
     return next();
   }
 
+  console.log("error")
 }
 
 module.exports = router;

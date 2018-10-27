@@ -77,7 +77,7 @@ router.post('/dislike', isAuthenticated, async function(req,res,next) {
   connection.query(sql, [movie_name], function (err, rows) {
     if (err) return  res.status(500).send({ "response": "error"});
     if(!rows[0]) return res.status(404).send({ "response": "movie not found"});
-    var sql = 'SELECT * FROM likedmovie where movie_id = ? AND user_id = ?';
+    var sql = 'SELECT * FROM dislikedmovie where movie_id = ? AND user_id = ?';
     connection.query(sql, [rows[0].id, user_id], function (err, bookmark) {
       if (err) return err
       if (!bookmark[0]){
