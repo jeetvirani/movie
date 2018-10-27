@@ -24,6 +24,7 @@ router.get('/searchUser', isAuthenticated, async function(req,res,next) {
 
 
 router.post('/followUser', isAuthenticated, async function(req,res,next) {
+  console.log(req.session.user)
   var user_id = req.session.user.id;
   var sql = 'SELECT * FROM user WHERE username = ?';
   var username = req.body.username;
